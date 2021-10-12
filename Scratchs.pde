@@ -1,22 +1,23 @@
 PImage bin16;
 HashMap<String, String> globalvar = new HashMap<String, String>();
 StringList oldtext = new StringList();
-int N = 12;
+int N = 18;
 
 Cat cat;
 void setup() {
-  size(900, 600);
+  size(1500, 1000);
   frameRate(60);
   bin16 = loadImage("bin16.png");
   background(0);
   textSize(15);
-  cat = new Cat(80);
+  cat = new Cat(80,1200,200);
+  addText("Scratchs Version 3.1b");
   redraw();
 }
 boolean selectedcat = false;
 ArrayList<command> cmd = new ArrayList<command>();
-command selectedcmd, nextcmd, subcmd, selmenu,delaycommand;
-int ox, oy, mx, my, tc = 1;
+command selectedcmd, nextcmd, subcmd, selmenu, delaycommand;
+int ox, oy, mx, my, tc = 1, ocx, ocy, mcx, mcy;
 long nexttime;
 void draw() {
   if (delaycommand != null) {
@@ -24,7 +25,7 @@ void draw() {
       background(0);
       delaycommand.action(); 
       redraw();
-      delaycommand = null; 
+      delaycommand = null;
     }
   }
   if (mousePressed) {
@@ -44,6 +45,14 @@ void draw() {
       } 
       rect(0, height - 40, width, height);
       image(bin16, width/2, height - 32);
+    } else {
+      if (mouseButton == LEFT) {
+        cat.posx = ocx + (mouseX-mcx);
+        cat.posy = ocy + (mouseY-mcy);
+        println(cat.posx + "," + cat.posy);
+        background(0);
+        redraw();
+      }
     }
   }
 }
@@ -66,7 +75,13 @@ void pairfinder() {
   }
 }
 void redraw() {
-  fill(100);
+  
+  cat.draws();
+  stroke(0);
+  fill(0,0,0,180);
+  rect(0,0,900,1000);
+  
+  fill(60);
   for (int i = 0; i < 9; i++) {
     rect(i*100, 0, 100, 50);
     rect(i*100, 50, 100, 50);
@@ -80,19 +95,19 @@ void redraw() {
   text("... + ... ", 410, 30);
   text("... > ... ", 510, 30);
   text("Print ... ", 610, 30);
-  text("RUNS ", 710, 30);
-  text("CONST ", 810, 30);
-  text("MOVE ... ", 10,80);
-  text("ROTATE ... ", 110,80);
-  text("DELAYS ... ", 210,80);
-  text("Position X", 310,80);
-  text("Position Y", 410,80);
-  text("... ++", 510,80);
+  text("RUN ", 710, 30);
+  text("VAL ", 810, 30);
+  text("MOVE ... ", 10, 80);
+  text("ROTATE ... ", 110, 80);
+  text("DELAY ... ", 210, 80);
+  text("Position X", 310, 80);
+  text("Position Y", 410, 80);
+  text("... ++", 510, 80);
   for (int i = 0; i < cmd.size(); i++) {
     command sel = cmd.get(i);
     sel.draw();
   }
-  cat.draws();
+  
   if (selectedcmd != null)selectedcmd.draw();
   if (selmenu != null) {
     fill(0, 0, 0, 127);
@@ -100,7 +115,13 @@ void redraw() {
     println("OKAY");
     selmenu.drawMenu();
   }
+  stroke(100);
+  line(900,0,900,1000);
+  fill(0,0,0,200);
+  rect(900,520,600,480);
+  line(900,520,1500,520);
   drawtext();
+  stroke(0);
 }
 void keyPressed() {
   if (selmenu != null) {
@@ -109,6 +130,10 @@ void keyPressed() {
   }
 }
 void mousePressed() {
+  ocx = (int)cat.posx;
+  ocy = (int)cat.posy;
+  mcx = mouseX;
+  mcy = mouseY;
   if (selmenu != null) {
     if (selmenu.mouseDown(mouseX, mouseY)) {
       selmenu = null;
@@ -120,7 +145,7 @@ void mousePressed() {
       for (int i = 0; i < cmd.size(); i++) {
         command sel = cmd.get(i);
         println("Pressed");
-        sel = sel.getClass(mouseX, mouseY,true);
+        sel = sel.getClass(mouseX, mouseY, true);
         if (sel != null) {
           //println(mouseX + "," + mouseY + " : \n");
           selectedcmd = sel;
@@ -182,9 +207,9 @@ void mousePressed() {
           command ncmd = new consts(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
-        } 
+        }
       } else if (mouseY < 100) {
-         if (mouseX < 100) {
+        if (mouseX < 100) {
           command ncmd = new Walk(); 
           cmd.add(ncmd);
           tc++;
@@ -194,7 +219,7 @@ void mousePressed() {
           cmd.add(ncmd);
           tc++;
           selectedcmd = ncmd;
-        }  else if (mouseX < 300) {
+        } else if (mouseX < 300) {
           command ncmd = new delays(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
@@ -206,10 +231,13 @@ void mousePressed() {
           command ncmd = new CatY(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
-        }else if (mouseX < 600) {
+        } else if (mouseX < 600) {
           command ncmd = new Operand(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
+        } else {
+          mx = mouseX;
+          my = mouseY;
         }
       }
       redraw();
@@ -218,7 +246,7 @@ void mousePressed() {
         for (int i = 0; i < cmd.size(); i++) {
           command sel = cmd.get(i);
 
-          sel = sel.getClass(mouseX, mouseY,false);
+          sel = sel.getClass(mouseX, mouseY, false);
           if (sel != null) {
 
             if (sel.menu()) {

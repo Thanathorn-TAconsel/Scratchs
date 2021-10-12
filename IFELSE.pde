@@ -15,6 +15,7 @@ class IFELSE extends command {
     return "0";
   }
   IFELSE() {
+    this.sx = 150;
     this.colors = color(255, 255, 0); 
     this.sy = 100;
     this.text = "IF .... THEN";

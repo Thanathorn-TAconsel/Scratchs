@@ -2,6 +2,7 @@ class operation extends command {
   command vts, stv;
   int conheight = 25;
   char mode = '+';
+  int offL = 15;
   operation() {
     this.colors = color(255, 191, 128); 
     this.sy = 25;
@@ -32,7 +33,7 @@ class operation extends command {
       } else {
         result = vts.action() + stv.action();
       }
-      
+
       if (child != null)
         child.action();
       println("CALC: " + result);
@@ -59,8 +60,10 @@ class operation extends command {
         addChild(child);
       } else if (acceptstate == 2) {
         vts = child;
+        vts.subtrack = true;
       } else if (acceptstate == 3) {
         stv = child;
+        stv.subtrack = true;
       }
     redraw();
     acceptstate = 0;
@@ -72,12 +75,20 @@ class operation extends command {
     else if (mode == '-')mode = '*';
     else if (mode == '*')mode = '/';
     else mode = '+';
-    this.text = ".... " + mode + " ....";
+
     return false;
   }
   void draw() {
+    if (this.subtrack) {
+      offL = 20;
+    } else {
+      offL = 0;
+    }
     if (vts !=null) {
       lvts = vts.getLastChild();
+      this.text = "";
+    } else {
+      this.text = ".... " + mode + " ....";
     }
     if (stv !=null) {
       lstv = stv.getLastChild();
@@ -98,37 +109,42 @@ class operation extends command {
         fill(255, 128, 128);
         rect(lx, ly, sx, sy);
         fill(255, 0, 0);
-        rect(lx+9, ly, 20, sy);
+        rect(lx+9+offL, ly, 20, sy);
       } else if (acceptstate == 3) {
         if (vts == null) {
           fill(255, 128, 128);
           rect(lx, ly, sx, sy);
           fill(255, 0, 0);
-          rect(lx+49, ly, 20, sy);
+          rect(lx+49+offL, ly, 20, sy);
         } else {
           fill(255, 128, 128);
           rect(lx, ly, sx, sy);
           fill(255, 0, 0);
-          rect( (lvts.lx + lvts.sx) + 22, ly, 20, sy);
+          if (subtrack) {
+              rect( (lvts.lx + lvts.sx+offL)+7, ly, 20, sy);
+          } else {
+            rect( (lvts.lx + lvts.sx+offL) + 24, ly, 20, sy);
+          }
+          
         }
       }
     } else {
       rect(lx, ly, sx, sy);
     }
     fill(0);
-    text(text, lx+10, ly+17);
+    text(text, lx+10+offL, ly+17);
     sx = 200;
     if (vts != null) {
-      vts.lx = lx + 9;
+      vts.lx = lx + 9+offL;
       vts.ly = ly;
       vts.draw();
       sx = ((lvts.lx +lvts.sx) - vts.lx) + 105;
-      text(mode + "  ....", (lx + sx) - 90, ly+17);
+      text(mode + "  ....", (lx + sx+offL) - 90, ly+17);
       sy = lvts.ly+lvts.sy - ly;
     }
     if (stv != null) {
       if (vts == null)
-        stv.lx = lx+49;
+        stv.lx = lx+49+offL;
       else
         stv.lx = (lvts.lx + lvts.sx) + 22;
       stv.ly = ly;
@@ -137,6 +153,11 @@ class operation extends command {
       if (lstv.ly+lstv.sy - ly > sy) {
         sy = lstv.ly+lstv.sy - ly;
       }
+      sx += offL*1.5;
+    }
+    if (this.subtrack) {
+      text("(",lx+10,ly+17);
+      text(")",lx+sx - 17,ly+17);
     }
     if (this.child != null) {
       if (this.head == null) {
@@ -155,6 +176,7 @@ class operation extends command {
       output = vts.getClass(x, y, getout);
       if (output != null) {
         if (output == vts && getout) {
+          vts.subtrack = false;
           vts = null;
         }
         return output;
@@ -164,6 +186,7 @@ class operation extends command {
       output = stv.getClass(x, y, getout);
       if (output != null) {
         if (output == stv && getout) {
+          stv.subtrack = false;
           stv = null;
         }
         return output;
@@ -193,20 +216,28 @@ class operation extends command {
   command Touch(command othercmd) {
     acceptstate = 1;
     if (vts == null) {
-      if (othercmd.lx > lx+49 && othercmd.lx < lx+69) {
+      if (othercmd.lx > lx+49+offL  && othercmd.lx < lx+69+offL) {
         if (stv == null) {
           acceptstate = 3;
         }
       }
     } else {
-      if (othercmd.lx > (lvts.lx + lvts.sx) + 22 && othercmd.lx < (lvts.lx + lvts.sx) + 45) {
-        if (stv == null) {
-          acceptstate = 3;
+      if (subtrack) {
+        if (othercmd.lx > (lvts.lx + lvts.sx + offL)+7 && othercmd.lx < (lvts.lx + lvts.sx + offL) + 45) {
+          if (stv == null) {
+            acceptstate = 3;
+          }
+        }
+      } else {
+        if (othercmd.lx > (lvts.lx + lvts.sx + offL) + 24 && othercmd.lx < (lvts.lx + lvts.sx + offL) + 45) {
+          if (stv == null) {
+            acceptstate = 3;
+          }
         }
       }
     }
 
-    if (othercmd.lx > lx+9 && othercmd.lx < lx+27) {
+    if (othercmd.lx > lx+9+offL && othercmd.lx < lx+29+offL) {
       if (vts == null) {
         acceptstate = 2;
       }

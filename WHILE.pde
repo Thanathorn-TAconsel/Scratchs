@@ -2,6 +2,7 @@ class WHILE extends command {
   command test, no, end;
   int conheight = 25;
   public String action() {
+    
     while (true) {
       int result = parseInt(test.action());
       if (result > 0) {
@@ -15,6 +16,7 @@ class WHILE extends command {
     return "0";
   }
   WHILE() {
+    this.sx = 150;
     this.colors = color(255, 255, 0); 
     this.sy = 100;
     this.text = "WHILE .... THEN";

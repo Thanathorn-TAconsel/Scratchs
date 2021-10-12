@@ -47,8 +47,12 @@ class comparator extends command {
   command lstv;
   void draw() {
     if (vts !=null) {
-      lvts = vts.getLastChild();      
+      lvts = vts.getLastChild();    
+      this.text = "";
+    } else {
+      this.text = ".... " + ">" + " ....";
     }
+    
     if (stv !=null) {
       lstv = stv.getLastChild();      
     }

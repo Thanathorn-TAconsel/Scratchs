@@ -49,6 +49,9 @@ class Operand extends command {
   void draw() {
     if (vts !=null) {
       lvts = vts.getLastChild();
+      this.text = "";
+    } else {
+      this.text = ".... ++";
     }
 
     if (isselected) {

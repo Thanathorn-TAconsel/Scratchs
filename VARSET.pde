@@ -33,6 +33,9 @@ class VARSET extends command {
   void draw() {
     if (vts !=null) {
       lvts = vts.getLastChild();      
+      this.text = "SET";
+    } else {
+      this.text = "SET .... TO ....";
     }
     if (stv !=null) {
       lstv = stv.getLastChild();      

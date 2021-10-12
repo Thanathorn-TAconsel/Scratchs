@@ -16,7 +16,7 @@ class consts extends command {
       } else if (sel == 2) {
         value = backspace(value);
       }
-    } else if ((k >= 'A' && k <= 'Z') || (k >= 'a' && k <= 'z') || (k >= '0' && k <= '9') || k == '-'){
+    } else if ((k >= 'A' && k <= 'Z') || (k >= 'a' && k <= 'z') || (k >= '0' && k <= '9') || k == '-' || k == ' ' || k == ':'){
       if (sel == 1) {
          varname += k; 
          setValue(varname);
@@ -24,6 +24,7 @@ class consts extends command {
         value += k;
       } 
     }
+    this.sx = 20 + varname.length()*10; 
     drawMenu();
   }
   boolean mouseDown(int x,int y){

@@ -22,12 +22,14 @@ class var extends command {
     } else if ((k >= 'A' && k <= 'Z') || (k >= 'a' && k <= 'z') || (k >= '0' && k <= '9') || k == '-'){
       if (sel == 1) {
          varname += k; 
+         
          setName(varname);
       } else if (sel == 2) {
         value += k;
         setValue(value);
       } 
     }
+    this.sx = 20 + varname.length()*10; 
     drawMenu();
   }
   boolean mouseDown(int x,int y){
@@ -53,7 +55,7 @@ class var extends command {
   }
   void setName(String name){
     this.varname = name;
-    this.text = "Var " + name;
+    this.text = "" + name;
   }
   void drawMenu() {
     fill(40);
