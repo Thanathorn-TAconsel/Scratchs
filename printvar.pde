@@ -1,18 +1,22 @@
-class delays extends command {
+class PrintVar extends command {
   command vts;
   int conheight = 25;
+  int shift = 62;
   public String action() {
-    if (vts != null && child != null) {
-      float amount = parseFloat(vts.action());
-      delaycommand = child;
-      nexttime = millis() + (long)amount;
+    if (vts != null) {
+      String amount = vts.action();
+      background(0);
+      addText(amount);
+      redraw();
     }
+    if (child != null)
+    return child.action();
     return "0";
   }
-  delays() {
+  PrintVar() {
     this.colors = color(255, 255, 128); 
     this.sy = 25;
-    this.text = "DELAYS ....";
+    this.text = "PRINT  ....";
   }
 
   void inputs(command child) {
@@ -47,7 +51,7 @@ class delays extends command {
         fill(255, 128, 128);
         rect(lx, ly, sx, sy);
         fill(255, 0, 0);
-        rect(lx+72, ly, 20, sy);
+        rect(lx+shift, ly, 20, sy);
       }
     } else {
       rect(lx, ly, sx, sy);
@@ -56,7 +60,7 @@ class delays extends command {
     text(text, lx+10, ly+17);
     sx = 200;
     if (vts != null) {
-      vts.lx = lx + 72;
+      vts.lx = lx + shift;
       vts.ly = ly;
       vts.draw();
       sx = ((lvts.lx +lvts.sx) - vts.lx) + 80;
@@ -111,7 +115,7 @@ class delays extends command {
 
     }
 
-    if (othercmd.lx > lx+72 && othercmd.lx < lx+92) {
+    if (othercmd.lx > lx+shift && othercmd.lx < lx+shift+20) {
       if (vts == null) {
         acceptstate = 2;
       }

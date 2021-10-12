@@ -15,7 +15,7 @@ class Walk extends command {
   Walk() {
     this.colors = color(255, 255, 128); 
     this.sy = 25;
-    this.text = "WALK ....";
+    this.text = "MOVE ....";
   }
   boolean menu() {
     if (dir == "R") {

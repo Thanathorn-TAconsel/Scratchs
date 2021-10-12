@@ -8,18 +8,33 @@ class operation extends command {
     this.text = ".... + ....";
   }
   public String action() {
-    if (vts != null && stv != null){
-      float a = parseInt(vts.action());
-      float b = parseInt(stv.action());
-      float result = 0;
-      switch(mode) {
-         case '+':result = a + b;break;
-         case '-':result = a - b;break;
-         case '*':result = a * b;break;
-         case '/':result = a / b;break;
+    if (vts != null && stv != null) {
+      String result = "";
+      if (isfloat(vts.action()) && isfloat(stv.action())) {
+        float a = parseFloat(vts.action());
+        float b = parseFloat(stv.action());
+        float results = 0;
+        switch(mode) {
+        case '+':
+          results = a + b;
+          break;
+        case '-':
+          results = a - b;
+          break;
+        case '*':
+          results = a * b;
+          break;
+        case '/':
+          results = a / b;
+          break;
+        }
+        result = results + "";
+      } else {
+        result = vts.action() + stv.action();
       }
+      
       if (child != null)
-      child.action();
+        child.action();
       println("CALC: " + result);
       return result + "";
     }
@@ -27,6 +42,17 @@ class operation extends command {
       return child.action();
     return "0";
   }
+  boolean isfloat(String s) {
+    boolean result = false;
+    try {
+      Float.parseFloat(s);
+      result = true;
+    }
+    catch(NumberFormatException e) {
+    }
+    return result;
+  }
+
   void inputs(command child) {
     if (isinput)
       if (acceptstate == 1) {
@@ -51,10 +77,10 @@ class operation extends command {
   }
   void draw() {
     if (vts !=null) {
-      lvts = vts.getLastChild();      
+      lvts = vts.getLastChild();
     }
     if (stv !=null) {
-      lstv = stv.getLastChild();      
+      lstv = stv.getLastChild();
     }
 
     if (isselected) {
@@ -102,14 +128,14 @@ class operation extends command {
     }
     if (stv != null) {
       if (vts == null)
-      stv.lx = lx+49;
+        stv.lx = lx+49;
       else
-      stv.lx = (lvts.lx + lvts.sx) + 22;
+        stv.lx = (lvts.lx + lvts.sx) + 22;
       stv.ly = ly;
       stv.draw();
       sx = (lstv.sx + lstv.lx) - lx;
       if (lstv.ly+lstv.sy - ly > sy) {
-        sy = lstv.ly+lstv.sy - ly;  
+        sy = lstv.ly+lstv.sy - ly;
       }
     }
     if (this.child != null) {
@@ -123,10 +149,10 @@ class operation extends command {
       this.child.draw();
     }
   }
-  command getClass(int x, int y,boolean getout) {
+  command getClass(int x, int y, boolean getout) {
     command output = null;
     if (vts != null) {
-      output = vts.getClass(x, y,getout);
+      output = vts.getClass(x, y, getout);
       if (output != null) {
         if (output == vts && getout) {
           vts = null;
@@ -135,7 +161,7 @@ class operation extends command {
       }
     }
     if (stv != null) {
-      output = stv.getClass(x, y,getout);
+      output = stv.getClass(x, y, getout);
       if (output != null) {
         if (output == stv && getout) {
           stv = null;
@@ -143,7 +169,7 @@ class operation extends command {
         return output;
       }
     }
-    output = super.getClass(x, y,getout);
+    output = super.getClass(x, y, getout);
     return output;
   }
 

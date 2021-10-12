@@ -1,20 +1,39 @@
-class delays extends command {
+class Operand extends command {
   command vts;
   int conheight = 25;
+  String disp = "++";
+  char dir ='+';
+  int shift = 10;
   public String action() {
-    if (vts != null && child != null) {
+    if (vts != null) {
       float amount = parseFloat(vts.action());
-      delaycommand = child;
-      nexttime = millis() + (long)amount;
+      var A = (var)vts;
+      if (dir == '+') {
+        A.setValue( (amount+1) + "");  
+      } else if (dir == '-') {
+        A.setValue( (amount-1) + "");
+      }
+      
     }
+    if (child != null)
+      return child.action();
     return "0";
   }
-  delays() {
+  Operand() {
     this.colors = color(255, 255, 128); 
     this.sy = 25;
-    this.text = "DELAYS ....";
+    this.text = ".... ++";
   }
-
+  boolean menu() {
+    if (dir == '+') {
+      dir = '-';
+      disp = "--";
+    } else if (dir == '-') {
+      dir = '+';
+      disp = "++";
+    }
+    return false;
+  }
   void inputs(command child) {
     if (isinput)
       if (acceptstate == 1) {
@@ -29,7 +48,7 @@ class delays extends command {
   command lstv;
   void draw() {
     if (vts !=null) {
-      lvts = vts.getLastChild();      
+      lvts = vts.getLastChild();
     }
 
     if (isselected) {
@@ -47,7 +66,7 @@ class delays extends command {
         fill(255, 128, 128);
         rect(lx, ly, sx, sy);
         fill(255, 0, 0);
-        rect(lx+72, ly, 20, sy);
+        rect(lx+shift, ly, 20, sy);
       }
     } else {
       rect(lx, ly, sx, sy);
@@ -56,11 +75,11 @@ class delays extends command {
     text(text, lx+10, ly+17);
     sx = 200;
     if (vts != null) {
-      vts.lx = lx + 72;
+      vts.lx = lx + shift;
       vts.ly = ly;
       vts.draw();
-      sx = ((lvts.lx +lvts.sx) - vts.lx) + 80;
-      //text("TO ....", (lx + sx) - 55, ly+17);
+      sx = ((lvts.lx +lvts.sx) - vts.lx) + shift+50;
+      text(disp, (lx + sx) - shift - 20, ly+17);
       sy = lvts.ly+lvts.sy - ly;
     }
 
@@ -86,7 +105,7 @@ class delays extends command {
         return output;
       }
     }
-    
+
     output = super.getClass(x, y,getout);
     return output;
   }
@@ -106,12 +125,10 @@ class delays extends command {
   command Touch(command othercmd) {
     acceptstate = 1;
     if (vts == null) {
-
     } else {
-
     }
 
-    if (othercmd.lx > lx+72 && othercmd.lx < lx+92) {
+    if (othercmd.lx > lx+shift && othercmd.lx < lx+shift+20) {
       if (vts == null) {
         acceptstate = 2;
       }

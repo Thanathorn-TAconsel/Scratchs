@@ -1,13 +1,15 @@
 class Cat {
   PImage picturecat;
   float posx, posy, picWidth, picHeight, radians = 0;
-
+  float defX ,defY;
   Cat() { 
     picturecat = loadImage("cat.png");
     picWidth = 200;
     picHeight = 150;
     posx = 400;
     posy = 400;
+    defX = posx;
+    defY = posy;
   }
   
   Cat(int size) { 
@@ -16,6 +18,8 @@ class Cat {
     picHeight = 1.5*size;
     posx = 400;
     posy = 400;
+    defX = posx;
+    defY = posy;
   }
   
   Cat(int size,int posx,int posy) {
@@ -24,6 +28,8 @@ class Cat {
     picHeight = 1.5*size;
     this.posx = posx;
     this.posy = posy;
+    defX = posx;
+    defY = posy;
   }  
   
   void draws() {
@@ -34,7 +40,12 @@ class Cat {
     image(picturecat,0,0,picWidth,picHeight);
     popMatrix();
   }
-  
+  float getX() {
+     return posx - defX; 
+  }
+  float getY() {
+     return posy - defY; 
+  }
   void move(String direction,float amount) { 
     switch(direction) {
       case "U" :

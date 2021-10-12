@@ -1,5 +1,8 @@
 PImage bin16;
 HashMap<String, String> globalvar = new HashMap<String, String>();
+StringList oldtext = new StringList();
+int N = 12;
+
 Cat cat;
 void setup() {
   size(900, 600);
@@ -12,9 +15,18 @@ void setup() {
 }
 boolean selectedcat = false;
 ArrayList<command> cmd = new ArrayList<command>();
-command selectedcmd, nextcmd, subcmd, selmenu;
+command selectedcmd, nextcmd, subcmd, selmenu,delaycommand;
 int ox, oy, mx, my, tc = 1;
+long nexttime;
 void draw() {
+  if (delaycommand != null) {
+    if (millis() >= nexttime) {
+      background(0);
+      delaycommand.action(); 
+      redraw();
+      delaycommand = null; 
+    }
+  }
   if (mousePressed) {
     if (selectedcmd != null) {
       background(0);
@@ -70,9 +82,12 @@ void redraw() {
   text("Print ... ", 610, 30);
   text("RUNS ", 710, 30);
   text("CONST ", 810, 30);
-  text("WALK ... ", 10,80);
+  text("MOVE ... ", 10,80);
   text("ROTATE ... ", 110,80);
   text("DELAYS ... ", 210,80);
+  text("Position X", 310,80);
+  text("Position Y", 410,80);
+  text("... ++", 510,80);
   for (int i = 0; i < cmd.size(); i++) {
     command sel = cmd.get(i);
     sel.draw();
@@ -85,7 +100,7 @@ void redraw() {
     println("OKAY");
     selmenu.drawMenu();
   }
-  
+  drawtext();
 }
 void keyPressed() {
   if (selmenu != null) {
@@ -156,7 +171,7 @@ void mousePressed() {
           cmd.add(ncmd);
           selectedcmd = ncmd;
         } else if (mouseX < 700) {
-          command ncmd = new prints(); 
+          command ncmd = new PrintVar(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
         } else if (mouseX < 800) {
@@ -181,6 +196,18 @@ void mousePressed() {
           selectedcmd = ncmd;
         }  else if (mouseX < 300) {
           command ncmd = new delays(); 
+          cmd.add(ncmd);
+          selectedcmd = ncmd;
+        } else if (mouseX < 400) {
+          command ncmd = new CatX(); 
+          cmd.add(ncmd);
+          selectedcmd = ncmd;
+        } else if (mouseX < 500) {
+          command ncmd = new CatY(); 
+          cmd.add(ncmd);
+          selectedcmd = ncmd;
+        }else if (mouseX < 600) {
+          command ncmd = new Operand(); 
           cmd.add(ncmd);
           selectedcmd = ncmd;
         }
